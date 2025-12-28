@@ -1,0 +1,809 @@
+17. how to create tree
+  #include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        printf("Memory allocation failed\n");
+        return NULL;
+    }
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+void printTree(struct Node* root) {
+    if (root == NULL) return;
+    printf("%d ", root->data);
+    printTree(root->left);
+    printTree(root->right);
+}
+int main() {
+        struct Node* root = createNode(1);
+    root->left = createNode(2);
+    root->right = createNode(3);
+       root->left->left = createNode(4);
+    printf("Preorder Traversal of the created tree: ");
+    printTree(root);
+    printf("\n");
+    printf("\n--- System MAC Address ---\n");
+    system("getmac");
+    return 0;
+}
+18. using array we can construct a tree
+  #include <stdio.h>
+#include <stdlib.h>
+#define MAX_NODES 10
+void displayTree(int tree[], int n) {
+    printf("Index\tValue\tL-Child\tR-Child\n");
+    printf("-----\t-----\t-------\t-------\n");
+    for (int i = 0; i < n; i++) {
+        if (tree[i] != -1) {
+            printf("%d\t%d\t", i, tree[i]);
+                        int left = 2 * i + 1;
+            if (left < n && tree[left] != -1) printf("%d\t", tree[left]);
+            else printf("NULL\t");
+            int right = 2 * i + 2;
+            if (right < n && tree[right] != -1) printf("%d\n", tree[right]);
+            else printf("NULL\n");
+        }
+    }
+}
+int main() {
+       tree[0] = 10; 
+    tree[1] = 20; 
+    tree[2] = 30; 
+    tree[3] = 40; 
+    printf("Tree Representation using Array:\n");
+    displayTree(tree, 4);
+    printf("\n--- System MAC Address ---\n");
+    system("getmac");
+    return 0;
+} 
+19. construct a binary tree using queue
+  #include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node *left, *right;
+};
+struct Queue {
+    int front, rear, size;
+    struct Node** array;
+};
+struct Node* newNode(int data) {
+    struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+    temp->data = data;
+    temp->left = temp->right = NULL;
+    return temp;
+}
+struct Queue* createQueue(int size) {
+    struct Queue* queue = (struct Queue*)malloc(sizeof(struct Queue));
+    queue->front = queue->rear = -1;
+    queue->size = size;
+    queue->array = (struct Node**)malloc(queue->size * sizeof(struct Node*));
+    return queue;
+}
+void enqueue(struct Node* node, struct Queue* queue) {
+    queue->array[++queue->rear] = node;
+    if (queue->front == -1) queue->front = 0;
+}
+struct Node* dequeue(struct Queue* queue) {
+    return queue->array[queue->front++];
+}
+void insert(struct Node** root, int data, struct Queue* queue) {
+    struct Node* temp = newNode(data);
+    if (*root == NULL) {
+        *root = temp;
+    } else {
+        struct Node* front = queue->array[queue->front];
+        if (front->left == NULL) {
+            front->left = temp;
+        } else if (front->right == NULL) {
+            front->right = temp;
+            dequeue(queue);
+        }
+    }
+    enqueue(temp, queue);
+}
+void levelOrder(struct Node* root) {
+    if (root == NULL) return;
+    printf("%d ", root->data);
+    levelOrder(root->left);
+    levelOrder(root->right);
+}
+int main() {
+    struct Node* root = NULL;
+    struct Queue* queue = createQueue(20);
+    int elements[] = {10, 20, 30, 40, 50};
+    for(int i = 0; i < 5; i++) {
+        insert(&root, elements[i], queue);
+    }
+    printf("Tree constructed. Pre-order traversal: ");
+    levelOrder(root);
+    printf("\n");
+    printf("\n--- System MAC Address ---\n");
+    system("getmac");
+    return 0;
+}
+20. insertion of nodes
+  #include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node* next;
+};
+void insertAtFront(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    new_node->data = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
+}
+void insertAtEnd(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* last = *head_ref;
+    new_node->data = new_data;
+    new_node->next = NULL;
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return;
+    }
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = new_node;
+}
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf(" %d ->", node->data);
+        node = node->next;
+    }
+    printf(" NULL\n");
+}
+int main() {
+    struct Node* head = NULL;
+    insertAtEnd(&head, 10);    
+    insertAtFront(&head, 20);  
+    insertAtEnd(&head, 30);  
+
+    printf("Linked List after insertions:");
+    printList(head);
+    printf("\n--- System MAC Address Information ---\n");
+    system("getmac");
+    return 0;
+}
+21. deletion of nodes 
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node* next;
+};
+void push(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    new_node->data = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
+}
+void deleteNode(struct Node** head_ref, int key) {
+    struct Node *temp = *head_ref, *prev = NULL;
+    if (temp != NULL && temp->data == key) {
+        *head_ref = temp->next; 
+        free(temp);             
+        return;
+    }
+    while (temp != NULL && temp->data != key) {
+        prev = temp;
+        temp = temp->next;
+    }
+    if (temp == NULL) return;
+     prev->next = temp->next;
+    free(temp); 
+}
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf(" %d ->", node->data);
+        node = node->next;
+    }
+    printf(" NULL\n");
+}
+int main() {
+    struct Node* head = NULL;
+    push(&head, 10);
+    push(&head, 20);
+    push(&head, 30);
+    push(&head, 40);
+    printf("Original List:");
+    printList(head);
+    printf("\nDeleting node with value 20...");
+    deleteNode(&head, 20);
+    printf("\nList after Deletion:");
+    printList(head);
+    printf("\n--- System MAC Address ---\n");
+    system("getmac");
+    return 0;
+}
+22. depth search tree
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+void depthFirstSearch(struct Node* node) {
+    if (node == NULL) {
+        return;
+    }
+    // 1. Visit the Root
+    printf("%d ", node->data);
+    // 2. Traverse Left Subtree
+    depthFirstSearch(node->left);
+    // 3. Traverse Right Subtree
+    depthFirstSearch(node->right);
+}
+int main() {
+       struct Node* root = newNode(1);
+    root->left = newNode(2);
+    root->right = newNode(3);
+    root->left->left = newNode(4);
+    root->left->right = newNode(5);
+    printf("DFS (Pre-order) of the tree: ");
+    depthFirstSearch(root);
+    printf("\n");
+    printf("\n--- System MAC Address Information ---\n");
+    system("getmac");
+    return 0;
+}
+23. breath search tree
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node *left, *right;
+};
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->left = node->right = NULL;
+    return node;
+}
+void printBreadthFirstSearch(struct Node* root) {
+    if (root == NULL) return;
+    struct Node* queue[100];
+    int front = 0, rear = 0;
+    // Enqueue root
+    queue[rear++] = root;
+    while (front < rear) {
+        // Dequeue node
+        struct Node* current = queue[front++];
+        printf("%d ", current->data);
+        // Enqueue left child
+        if (current->left != NULL) {
+            queue[rear++] = current->left;
+        }
+        // Enqueue right child
+        if (current->right != NULL) {
+            queue[rear++] = current->right;
+        }
+    }
+}
+
+int main() {
+   
+    struct Node* root = newNode(1);
+    root->left = newNode(2);
+    root->right = newNode(3);
+    root->left->left = newNode(4);
+    root->left->right = newNode(5);
+    printf("BFS (Level Order) of the tree: ");
+    printBreadthFirstSearch(root);
+    printf("\n");
+    printf("\n--- System MAC Address Information ---\n");
+    system("getmac");
+    return 0;
+}
+24. level order
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node *left, *right;
+};
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->left = node->right = NULL;
+    return node;
+}
+void levelOrder(struct Node* root) {
+    if (root == NULL) return;
+    struct Node* queue[100];
+    int front = 0, rear = 0;
+    // Enqueue Root
+    queue[rear++] = root;
+     while (front < rear) {
+        // Dequeue
+        struct Node* tempNode = queue[front++];
+        printf("%d ", tempNode->data);
+        // Enqueue left child
+        if (tempNode->left != NULL)
+            queue[rear++] = tempNode->left;
+        // Enqueue right child
+        if (tempNode->right != NULL)
+            queue[rear++] = tempNode->right;
+    }
+}
+int main() {
+      struct Node* root = newNode(10);
+    root->left = newNode(20);
+    root->right = newNode(30);
+    root->left->left = newNode(40);
+    root->left->right = newNode(50);
+    printf("Level Order Traversal: ");
+    levelOrder(root);
+    printf("\n");
+    printf("\n--- System MAC Address ---\n");
+    system("getmac");
+    return 0;
+}
+25. DFS and BFS using adjecency list(use stack and queues in program)
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int vertex;
+    struct Node* next;
+};
+struct Graph {
+    int numVertices;
+    struct Node** adjLists;
+    int* visited;
+};
+struct Node* createNode(int v) {
+    struct Node* newNode = malloc(sizeof(struct Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+struct Graph* createGraph(int vertices) {
+    struct Graph* graph = malloc(sizeof(struct Graph));
+    graph->numVertices = vertices;
+    graph->adjLists = malloc(vertices * sizeof(struct Node*));
+    graph->visited = malloc(vertices * sizeof(int));
+
+    for (int i = 0; i < vertices; i++) {
+        graph->adjLists[i] = NULL;
+        graph->visited[i] = 0;
+    }
+    return graph;
+}
+void addEdge(struct Graph* graph, int src, int dest) {
+       struct Node* newNode = createNode(dest);
+    newNode->next = graph->adjLists[src];
+    graph->adjLists[src] = newNode;
+    newNode = createNode(src);
+    newNode->next = graph->adjLists[dest];
+    graph->adjLists[dest] = newNode;
+}
+void bfs(struct Graph* graph, int startVertex) {
+    int queue[20], front = 0, rear = 0;
+    graph->visited[startVertex] = 1;
+    queue[rear++] = startVertex;
+    printf("BFS Traversal: ");
+    while (front < rear) {
+        int currentVertex = queue[front++];
+        printf("%d ", currentVertex);
+        struct Node* temp = graph->adjLists[currentVertex];
+        while (temp) {
+            int adjVertex = temp->vertex;
+            if (graph->visited[adjVertex] == 0) {
+                graph->visited[adjVertex] = 1;
+                queue[rear++] = adjVertex;
+            }
+            temp = temp->next;
+        }
+    }
+    printf("\n");
+}
+void dfs(struct Graph* graph, int vertex) {
+    struct Node* adjList = graph->adjLists[vertex];
+    struct Node* temp = adjList;
+    graph->visited[vertex] = 1;
+    printf("%d ", vertex);
+    while (temp != NULL) {
+        int connectedVertex = temp->vertex;
+        if (graph->visited[connectedVertex] == 0) {
+            dfs(graph, connectedVertex);
+        }
+        temp = temp->next;
+    }
+}
+int main() {
+    int vertices = 5;
+    struct Graph* graph = createGraph(vertices);
+    addEdge(graph, 0, 1);
+    addEdge(graph, 0, 2);
+    addEdge(graph, 1, 2);
+    addEdge(graph, 1, 3);
+    addEdge(graph, 2, 4);
+    bfs(graph, 0);
+    for (int i = 0; i < vertices; i++) graph->visited[i] = 0;
+    printf("DFS Traversal: ");
+    dfs(graph, 0);
+    printf("\n");
+    printf("\n--- System MAC Address ---\n");
+    system("getmac");
+    return 0;
+}
+26. calloc and malloc function checking if junk/zero is initialized to them
+#include <stdio.h>
+#include <stdlib.h>
+int main() {
+    int n = 5;
+    int *m_ptr, *c_ptr;
+    m_ptr = (int*)malloc(n * sizeof(int));
+    printf("Values in malloc allocated memory (Junk/Garbage):\n");
+    if (m_ptr == NULL) {
+        printf("Memory not allocated.\n");
+    } else {
+        for (int i = 0; i < n; i++) {
+            printf("%d ", m_ptr[i]);
+        }
+    }
+    printf("\n\n");
+    c_ptr = (int*)calloc(n, sizeof(int));
+    printf("Values in calloc allocated memory (Initialized to Zero):\n");
+    if (c_ptr == NULL) {
+        printf("Memory not allocated.\n");
+    } else {
+        for (int i = 0; i < n; i++) {
+            printf("%d ", c_ptr[i]);
+        }
+    }
+    printf("\n");
+    free(m_ptr);
+    free(c_ptr);
+    printf("\n--- System MAC Address Information ---\n");
+    system("getmac");
+    return 0;
+}
+27. linked list circular basic operations
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node* next;
+};
+struct Node* insertAtStart(struct Node* last, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+
+    if (last == NULL) {
+        newNode->next = newNode;
+        return newNode;
+    }
+    newNode->next = last->next;
+    last->next = newNode;
+    return last;
+}
+struct Node* insertAtEnd(struct Node* last, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    if (last == NULL) {
+        newNode->next = newNode;
+        return newNode;
+    }
+    newNode->next = last->next;
+    last->next = newNode;
+    return newNode; 
+}
+void display(struct Node* last) {
+    if (last == NULL) return;
+    struct Node* temp = last->next; 
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    } while (temp != last->next);
+    printf("(head)\n");
+}
+int main() {
+    struct Node* last = NULL;
+    last = insertAtStart(last, 10);
+    last = insertAtStart(last, 5);
+    last = insertAtEnd(last, 20);
+    printf("Circular Linked List: ");
+    display(last);
+       printf("\n--- System MAC Address Information ---\n");
+    system("getmac");
+    return 0;
+}
+28. how to implement comparison of 2 strings using built in function
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+int main() {
+    char str1[50], str2[50];
+    strcpy(str1, "Apple");
+    strcpy(str2, "Apple");
+    printf("String 1: %s\n", str1);
+    printf("String 2: %s\n", str2);
+    int result = strcmp(str1, str2);
+
+    if (result == 0) {
+        printf("Result: Strings are equal.\n");
+    } else if (result > 0) {
+        printf("Result: String 1 is greater than String 2.\n");
+    } else {
+        printf("Result: String 1 is less than String 2.\n");
+    }
+    char str3[] = "Banana";
+    printf("\nComparing '%s' and '%s': %d\n", str1, str3, strcmp(str1, str3));
+    printf("\n--- System MAC Address Information ---\n");
+    system("getmac");
+    return 0;
+}
+29. In linked list insertion in the middle and deletion in the middle 
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node* next;
+};
+void push(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    new_node->data = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
+}
+void insertAtMiddle(struct Node** head_ref, int position, int val) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = val;
+    if (position == 1) {
+        newNode->next = *head_ref;
+        *head_ref = newNode;
+        return;
+    }
+    struct Node* temp = *head_ref;
+    for (int i = 1; i < position - 1 && temp != NULL; i++) {
+        temp = temp->next;
+    }
+    if (temp == NULL) {
+        printf("Position out of bounds\n");
+    } else {
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
+}
+void deleteAtMiddle(struct Node** head_ref, int position) {
+    if (*head_ref == NULL) return;
+
+    struct Node* temp = *head_ref;
+
+    if (position == 1) {
+        *head_ref = temp->next;
+        free(temp);
+        return;
+    }
+    for (int i = 1; temp != NULL && i < position - 1; i++) {
+        temp = temp->next;
+    }
+    if (temp == NULL || temp->next == NULL) {
+        printf("Position out of bounds\n");
+        return;
+    }
+    struct Node* next = temp->next->next;
+    free(temp->next);
+    temp->next = next;
+}
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d -> ", node->data);
+        node = node->next;
+    }
+    printf("NULL\n");
+}
+int main() {
+    struct Node* head = NULL;
+    push(&head, 10);
+    push(&head, 20);
+    push(&head, 30);
+    printf("Original list: ");
+    printList(head);
+    insertAtMiddle(&head, 2, 25);
+    printf("After inserting 25 at pos 2: ");
+    printList(head);
+    deleteAtMiddle(&head, 3);
+    printf("After deleting node at pos 3: ");
+    printList(head);
+    printf("\n--- System MAC Address ---\n");
+    system("getmac");
+    return 0;
+}
+30. binary tree traveral
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+void printInorder(struct Node* node) {
+    if (node == NULL) return;
+    printInorder(node->left);
+    printf("%d ", node->data);
+    printInorder(node->right);
+}
+void printPreorder(struct Node* node) {
+    if (node == NULL) return;
+    printf("%d ", node->data);
+    printPreorder(node->left);
+    printPreorder(node->right);
+}
+void printPostorder(struct Node* node) {
+    if (node == NULL) return;
+    printPostorder(node->left);
+    printPostorder(node->right);
+    printf("%d ", node->data);
+}
+int main() {
+       struct Node* root = newNode(1);
+    root->left = newNode(2);
+    root->right = newNode(3);
+    root->left->left = newNode(4);
+    root->left->right = newNode(5);
+    printf("In-order traversal: ");
+    printInorder(root);
+    printf("\nPre-order traversal: ");
+    printPreorder(root);
+    printf("\nPost-order traversal: ");
+    printPostorder(root);
+    printf("\n");
+    printf("\n--- System MAC Address Information ---\n");
+    system("getmac");
+    return 0;
+}
+31. Circular Queue using Array(Modulo division , Queue full 
+, Queue empty)
+#include <stdio.h>
+#include <stdlib.h>
+#define SIZE 5
+int items[SIZE];
+int front = -1, rear = -1;
+int isFull() {
+    if ((front == (rear + 1) % SIZE)) return 1;
+    return 0;
+}
+int isEmpty() {
+    if (front == -1) return 1;
+    return 0;
+}
+void enqueue(int element) {
+    if (isFull()) {
+        printf("Queue is full!\n");
+    } else {
+        if (front == -1) front = 0;
+        rear = (rear + 1) % SIZE;
+        items[rear] = element;
+        printf("Inserted -> %d\n", element);
+    }
+}
+int dequeue() {
+    int element;
+    if (isEmpty()) {
+        printf("Queue is empty!\n");
+        return (-1);
+    } else {
+        element = items[front];
+        if (front == rear) {
+            front = -1;
+            rear = -1;
+        } else {
+            front = (front + 1) % SIZE;
+        }
+        return (element);
+    }
+}
+void display() {
+    int i;
+    if (isEmpty())
+        printf(" \n Empty Queue\n");
+    else {
+        printf("\n Front -> %d", front);
+        printf("\n Items -> ");
+        for (i = front; i != rear; i = (i + 1) % SIZE) {
+            printf("%d ", items[i]);
+        }
+        printf("%d ", items[i]);
+        printf("\n Rear -> %d \n", rear);
+    }
+}
+int main() {
+      enqueue(1);
+    enqueue(2);
+    enqueue(3);
+    enqueue(4);
+    enqueue(5);
+    display();
+    printf("\nDequeued element: %d\n", dequeue());
+    printf("After Dequeue, inserting 6 (Wraps around): \n");
+    enqueue(6);
+    display();
+    printf("\n--- System MAC Address Information ---\n");
+    system("getmac");
+    return 0;
+}
+32. Sparse Matrix representation using Linked list
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int row;
+    int col;
+    int data;
+    struct Node* next;
+};
+void create_node(struct Node** head, int r, int c, int val) {
+    struct Node *temp, *ptr;
+    temp = *head;
+    ptr = (struct Node*)malloc(sizeof(struct Node));
+    ptr->row = r;
+    ptr->col = c;
+    ptr->data = val;
+    ptr->next = NULL;
+    if (*head == NULL) {
+        *head = ptr;
+    } else {
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = ptr;
+    }
+}
+void display(struct Node* head) {
+    struct Node* temp = head;
+    printf("Row\tColumn\tValue\n");
+    printf("---\t------\t-----\n");
+    while (temp != NULL) {
+        printf("%d\t%d\t%d\n", temp->row, temp->col, temp->data);
+        temp = temp->next;
+    }
+}
+int main() {
+      int sparseMatrix[4][4] = {
+        {0, 0, 0, 5},
+        {0, 2, 0, 0},
+        {1, 0, 0, 0},
+        {0, 0, 3, 0}
+    };
+    struct Node* head = NULL;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (sparseMatrix[i][j] != 0) {
+                create_node(&head, i, j, sparseMatrix[i][j]);
+            }
+        }
+    }
+    printf("Sparse Matrix (Linked List Representation):\n");
+    display(head);
+    printf("\n--- System MAC Address Information ---\n");
+    system("getmac");
+    return 0;
+}
