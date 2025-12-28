@@ -1,4 +1,4 @@
-# data-structure
+1.Initialization of malloc () function into 0
 #include <stdio.h>
 #include <stdlib.h>
 #include<string.h>
